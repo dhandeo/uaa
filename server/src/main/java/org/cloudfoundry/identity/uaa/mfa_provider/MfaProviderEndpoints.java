@@ -3,6 +3,7 @@ package org.cloudfoundry.identity.uaa.mfa_provider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.cloudfoundry.identity.uaa.audit.event.EntityDeletedEvent;
+import org.cloudfoundry.identity.uaa.provider.IdpAlreadyExistsException;
 import org.cloudfoundry.identity.uaa.zone.IdentityZoneHolder;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
@@ -85,6 +86,12 @@ public class MfaProviderEndpoints implements ApplicationEventPublisherAware{
     public ResponseEntity<InvalidMfaProviderException> handleInvalidMfaProviderException(InvalidMfaProviderException e) {
         return new ResponseEntity<>(e, HttpStatus.UNPROCESSABLE_ENTITY);
     }
+
+    @ExceptionHandler(IdpAlreadyExistsException.class)
+    public ResponseEntity<InvalidMfaProviderException> handleInvalidMfaProviderException(IdpAlreadyExistsException e) {
+        return new ResponseEntity<>(new InvalidMfaProviderException(e.getMessage()), HttpStatus.CONFLICT);
+    }
+
 
     @ExceptionHandler(EmptyResultDataAccessException.class)
     public ResponseEntity<EmptyResultDataAccessException> handleEmptyResultDataAccessException(EmptyResultDataAccessException e) {
